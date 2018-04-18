@@ -49,7 +49,11 @@ let myMapControl = L.control.layers({
     "basemap.at Grau" : myLayers.bmapgrau,
     "basemap.at Orthophoto" : myLayers.bmaporthofoto30cm,
     "basemap.at bmaphidpi" : myLayers.bmaphidpi,
-})
+
+},{
+    "basemap.at Overlay" : myLayers.bmapoverlay,
+});
+
 
 myMap.addControl(myMapControl);
 
