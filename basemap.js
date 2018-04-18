@@ -6,7 +6,7 @@ let myLayers = {
 
 
 osm : L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    subdomains : ["maps","maps1","maps2","maps3","maps4"],
+    subdomains : ["a","b","c"],
     attribution : "Datenquelle: <a href=' https://www.basemap.at'>basemap.at</a>"
          }),
 
@@ -40,6 +40,21 @@ bmapgrau : L.tileLayer("https://{s}.wien.gv.at/basemap/bmapgrau/normal/google385
 };
 
 myMap.addLayer(myLayers.bmapgrau);
+
+
+let myMapControl = L.control.layers({
+    "Openstreetmap" : myLayers.osm,
+    "basemap.at Grundkarte" : myLayers.geolandbasemap,
+    "basemap.at Overlay" : myLayers.bmapoverlay,
+    "basemap.at Grau" : myLayers.bmapgrau,
+    "basemap.at Orthophoto" : myLayers.bmaporthofoto30cm,
+    "basemap.at bmaphidpi" : myLayers.bmaphidpi,
+})
+
+myMap.addControl(myMapControl);
+
+
+
 myMap.setView([47.267,11,383], 11);
 
 
@@ -51,5 +66,4 @@ myMap.setView([47.267,11,383], 11);
  
 
 
-myMap.addLayer(myLayer);
-myMap.setView([47.267,11.383], 11);
+
