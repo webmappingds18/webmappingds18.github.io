@@ -3,6 +3,8 @@ let myMap = L.map("mapdiv"); //http://leafletjs.com/reference-1.3.0.html#map-l-m
 
 //let url = "https://maps.wien.gv.at/basemap/geolandbasemap/normal/google3857/{z}/{y}/{x}.png";
 
+let markerGroup = L.featureGroup();   //marker gruppieren und als eigene Ebene einfügen
+
 let myLayers = {  //http://leafletjs.com/reference-1.3.0.html#tilelayer
 
 
@@ -53,6 +55,7 @@ let myMapControl = L.control.layers({  //http://leafletjs.com/reference-1.3.0.ht
 
 },{
     "basemap.at Overlay" : myLayers.bmapoverlay,
+    "Marker": markerGroup,  // Marker als wegschaltbare Ebene
 });
 
 
@@ -71,6 +74,7 @@ L.control.scale({
 }
 ).addTo(myMap); //http://leafletjs.com/reference-1.3.0.html#control-scale-l-control-scale
 
+
 L.control.layers({
     "Openstreetmap" : myLayers.osm,
     "basemap.at Grundkarte" : myLayers.geolandbasemap,
@@ -80,8 +84,9 @@ L.control.layers({
     "basemap.at bmaphidpi" : myLayers.bmaphidpi,
     //  <Object> overlays?
 },{
-    "basemap.at Overlay" : myLayers.bmapoverlay,
-    //  <Object> overlays?
+    "basemap.at Overlay" : myLayers.bmapoverlay, //  <Object> overlays?
+    
+
 }, {
     collapsed : false
     // <Control.Layers options> options
@@ -92,6 +97,10 @@ L.control.layers({
 const uni = [47.264, 11.385]; // variable erstellen (quasi als fixe location in den Befehlen)
 const usi = [47.257, 11.356];
 const technik = [47.263, 11.343]
+const igls = [47.230, 11.409]
+const patscherkofel = [47.208, 11.461]
+
+myMap.addLayer(markerGroup);
 
 const markerOptions = {
     title: "Universität Innsbruck",
@@ -100,9 +109,42 @@ const markerOptions = {
 } // variable für die einstellungen der makrer erstellen (einheitlich
 
 
-L.marker(uni, markerOptions).addTo(myMap);  //marker in die Karte und konfigurieren ihn gleich
-L.marker(usi, markerOptions).addTo(myMap)
-L.marker(technik, markerOptions).addTo(myMap)
+L.marker(uni, markerOptions).addTo(markerGroup);  //marker in die Karte und konfigurieren ihn gleich
+L.marker(usi, markerOptions).addTo(markerGroup)  // wichtig addTo in markerGroup ändern
+L.marker(technik, markerOptions).addTo(markerGroup)
+L.marker(igls, markerOptions).addTo(markerGroup)  
+L.marker(patscherkofel, markerOptions).bindPopup("<h1>Patscherkofel</h1>").addTo(markerGroup).openPopup 
+
+myMap.setView(uni, 14);
+
+myMap.fitBounds(markerGroup.getBounds());
 
 
-myMap.setView(uni, 13);
+//const patscherkofelPic = "https://apps.tirol.gv.at/luft/patscherkofel.jpg";  
+//L.marker(igls).addTo(markerGroup);
+//war nur ein versuch und wird nicht benötigt
+
+
+//Popup Bild einfügen
+
+
+let patscherkoflMarker = L.marker(patscherkofel).addTo(markerGroup); // variable mit den Coordinaten der const "patscherkofel" und zur markerGroup hinzufügen
+patscherkoflMarker.bindPopup("<p>Der Patscherkofel ist sexy</p><img style='width:200px' src='https://apps.tirol.gv.at/luft/patscherkofel.jpg' alt='Patscherkofl' />"); 
+// Achtung bei anführungszeichen keine Zeilenumbrüche
+
+let neueBahn = L.polyline([igls, patscherkofel], {
+    color : 'blue'
+
+});
+
+myMap.addLayer(neueBahn);
+
+let uniPolygon = L.polygon([uni,usi,technik], {
+    color: 'red'
+
+});
+
+myMap.addLayer(uniPolygon)
+uniPolygon.bindPopup("Ende")
+
+myMap.fitBounds(markerGroup.getBounds());
