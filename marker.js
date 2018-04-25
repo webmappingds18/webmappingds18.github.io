@@ -60,7 +60,7 @@ myMap.addControl(myMapControl); //L.map.addControl
 
 
 
-myMap.setView([47.267,11,383], 11); //http://leafletjs.com/reference-1.3.0.html#map-setview
+myMap.setView([47.264,11,385], 11); //http://leafletjs.com/reference-1.3.0.html#map-setview
 
 
 L.control.scale({
@@ -88,3 +88,21 @@ L.control.layers({
 }); 
 
 //comment: "metric" befehl leider trotz bemühen nicht geschafft.... ;(
+
+const uni = [47.264, 11.385]; // variable erstellen (quasi als fixe location in den Befehlen)
+const usi = [47.257, 11.356];
+const technik = [47.263, 11.343]
+
+const markerOptions = {
+    title: "Universität Innsbruck",
+    opacity: 0.6,
+    draggable: true
+} // variable für die einstellungen der makrer erstellen (einheitlich
+
+
+L.marker(uni, markerOptions).addTo(myMap);  //marker in die Karte und konfigurieren ihn gleich
+L.marker(usi, markerOptions).addTo(myMap)
+L.marker(technik, markerOptions).addTo(myMap)
+
+
+myMap.setView(uni, 13);
