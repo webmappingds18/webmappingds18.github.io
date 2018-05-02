@@ -110,7 +110,22 @@ async function addGeojson(url) {
     console.log("Response: ", response);
     const wiendata = await response.json();
     console.log("GeoJson: ", wiendata);
-    const geojson =L.geoJSON(wiendata);
+    const geojson =L.geoJSON(wiendata, {
+
+        style: function(feature) {
+            return { color: "#ff0000"};
+        },
+        pointToLayer: function(geoJsonPoint, latlng) {
+            return L.marker(latlng, {
+                icon: L.icon({
+                    iconUrl:"icon_wien.png"
+                })
+
+            });
+        }
+
+        
+    });
     wienGroup.addLayer(geojson);
     myMap.fitBounds(wienGroup.getBounds());
 
@@ -123,3 +138,4 @@ addGeojson(url);
 
 
 myMap.addLayer(wienGroup);
+
