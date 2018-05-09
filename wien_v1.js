@@ -139,3 +139,5 @@ addGeojson(url);
 
 myMap.addLayer(wienGroup);
 
+var markers = L.markerClusterGroup(wienGroup);
+markers.addLayer(L.marker(getRandomLatLng(myMap)));
