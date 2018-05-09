@@ -1,6 +1,8 @@
 let myMap = L.map("mapdiv"); // http://leafletjs.com/reference-1.3.0.html#map-l-map
 
-const wienGroup = L.featureGroup();
+const wienGroup = L.markerClusterGroup();
+//const wienGroup = L.markerClusterGroup(); //kann auch so ausgeführt werden
+
 
 let myLayers = {
     osm : L.tileLayer( // http://leafletjs.com/reference-1.3.0.html#tilelayer-l-tilelayer
