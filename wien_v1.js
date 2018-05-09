@@ -104,6 +104,9 @@ myLayer = L.tileLayer("https://maps.wien.gv.at/basemap/bmaphidpi/normal/google38
 myLayer = L.tileLayer("https://maps.wien.gv.at/basemap/bmaporthofoto30cm/normal/google3857/{z}/{y}/{x}.jpeg")
 */
 
+//var markerCluster = L.markerClusterGroup();  //Versuch
+//map.addLayer(markerCluster);                 //Versuch
+
 async function addGeojson(url) {
     console.log("Url wird geladen: ",url);
     const response = await fetch(url);
@@ -129,6 +132,10 @@ async function addGeojson(url) {
     wienGroup.addLayer(geojson);
     myMap.fitBounds(wienGroup.getBounds());
     const hash = new L.Hash(myMap)
+    myMap.addControl( new L.Control.Search({
+        layer: wienGroup,
+        propertyName: "Stationen"
+    }))
 }
 
 const url = "https://data.wien.gv.at/daten/geo?service=WFS&request=GetFeature&version=1.1.0&srsName=EPSG:4326&outputFormat=json&typeName=ogdwien:SPAZIERPUNKTOGD,ogdwien:SPAZIERLINIEOGD"
@@ -139,5 +146,5 @@ addGeojson(url);
 
 myMap.addLayer(wienGroup);
 
-var markers = L.markerClusterGroup(wienGroup);
-markers.addLayer(L.marker(getRandomLatLng(myMap)));
+//var markers = L.markerClusterGroup(wienGroup);
+//markers.addLayer(L.marker(getRan(myMap)));domLatLng
