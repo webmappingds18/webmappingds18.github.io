@@ -11,11 +11,18 @@
     <link rel="stylesheet" href="../js/leaflet/leaflet.css" />
     <script src="../js/leaflet/leaflet.js"></script>
 
-    <script src="data/etappe26.geojson.js"></script>
+    <!-- <script src="data/etappe26.geojson.js"></script> -->
 
     <link rel="stylesheet" href="styles.css" />
     <script defer src="biketirol.js"></script>
 
+    
+    <script src="../js/leaflet.fullscreen/Leaflet.fullscreen.js"></script>        
+    <link href="../js/leaflet.fullscreen/leaflet.fullscreen.css" rel='stylesheet' /> /
+
+    
+    <script src="../js/leaflet.gpx/gpx.js"></script>  
+    
 </head>
 
 <body>
@@ -40,7 +47,8 @@
 
         <p>Über asphaltierte Nebenstraßen und Feldwege bringt Sie diese 15 Kilometer lange Etappe von Oetz nach Imst. Sie beinhaltet keine nennenswerten Steigungen und ist daher als leichte Strecke eingestuft. </p>
 
-        
+        <p>Tourdaten : Gesamtlänge <span id="laenge"></span></p>
+
         <div id="map"></div>
 
         <h2>Streckenbeschreibung</h2>

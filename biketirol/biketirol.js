@@ -137,9 +137,13 @@ L.control.scale({           // http://leafletjs.com/reference-1.3.0.html#control
 
 }).addTo(myMap);            // http://leafletjs.com/reference-1.3.0.html#control-scale-addto
 
-console.log("stationen: ", stationen);
+
+//Wegpunkte deaktiviert weil wir es direkt als gpx Datei anwählen 
+
+// console.log("stationen: ", stationen);
 
 myMap.addLayer(awsGroup);
+/*
 let geojson = L.geoJSON(stationen).addTo(awsGroup);
 geojson.bindPopup(function (layer) {
     const props = layer.feature.properties;
@@ -147,7 +151,7 @@ geojson.bindPopup(function (layer) {
     <p>Temperatur: ${props.LT} °C</p>`;
     return popupText;
 });
-myMap.fitBounds(awsGroup.getBounds());
+myMap.fitBounds(awsGroup.getBounds()); */
 
 // Grundkartenlayer mit OSM, basemap.at, Elektronische Karte Tirol (Sommer, Winter, Orthophoto jeweils mit Beschriftung) über L.featureGroup([]) definieren
 // WMTS URLs siehe https://www.data.gv.at/katalog/dataset/land-tirol_elektronischekartetirol
@@ -162,3 +166,24 @@ myMap.fitBounds(awsGroup.getBounds());
 // Baselayer control für OSM, basemap.at, Elektronische Karte Tirol hinzufügen
 
 // Overlay controls zum unabhängigem Ein-/Ausschalten der Route und Marker hinzufügen
+
+
+let gpxTrack = new L.GPX("data/etappe26.gpx", {
+    async : true, 
+}).addTo(awsGroup);
+gpxTrack.on("loaded", function(evt) {
+    console.log("get_distance",evt.target.get_distance().toFixed(0))
+    console.log("get_elevation_max",evt.target.get_elevation_max().toFixed(0)) 
+    console.log("get_elevation_min",evt.target.get_elevation_min().toFixed(0))
+    console.log("get_elevation_gain",evt.target.get_elevation_gain().toFixed(0))
+    console.log("get_elevation_loss",evt.target.get_elevation_loss().toFixed(0))
+
+let laenge =evt.target.get_distance().toFixed(0);
+document.getElementById("laenge").innerHTML = laenge;
+
+    
+    myMap.fitBounds(evt.target.getBounds());
+});
+
+myMap.addControl(new L.Control.Fullscreen(map));   //fullscreen
+
