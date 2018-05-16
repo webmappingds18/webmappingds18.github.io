@@ -65,12 +65,53 @@ L.control.scale({
 }).addTo(karte);
 
 // asynchrone Funktion zum Laden eines GeoJSON Layers
-async function ladeGeojsonLayer(url) {
-    const response = await fetch(url);
+async function ladeGeojsonLayer(datenAttribute) {
+    console.log(datenAttribute);
+    const response = await fetch(datenAttribute.json);
     const response_json = await response.json();
 
+
+    if (datenAttribute.icon) {
+        console.log("Pause");
+    }
     // GeoJSON Geometrien hinzufügen und auf Ausschnitt zoomen
-    const geojsonObjekt = L.geoJSON(response_json);
+    const geojsonObjekt = L.geoJSON(response_json, {
+        onEachFeature : function(feature,layer) {
+            //console.log(feature);
+            //console.log(layer);
+
+            //Popups für die Marker wurden hinzugefügt +console log können ausgschalten werden (macht alles Langsam)
+
+           // console.log(feature.properties);
+            let popup = ""
+            for (attribut in feature.properties){
+               // console.log(attribut,feature.properties[attribut])
+                    let wert = feature.properties[attribut];
+                    if (wert && wert.toString().startsWith("http:")) {
+                    popup += `${attribut}: <a href="${wert}">weblink</a><br/>`;
+                    } else {
+                    popup += `${attribut}: ${wert}<br/>`;
+                }
+            }   
+            //console.log(popup)
+            layer.bindPopup(popup, {
+                maxWidth : 600,
+            });
+         }, 
+         pointToLayer : function (geoJsonPoint, latlng) {
+             if (datenAttribute.icon) {
+                return L.marker(latlng, {
+                    icon : L.icon({
+                        iconUrl : datenAttribute.icon,
+                        iconAnchor : [16,32],
+                        popupAnchor : [0,-32],
+                    })
+                })
+             } else {
+                 return L.marker(latlng);
+             }
+         }
+    });
     geojsonGruppe.addLayer(geojsonObjekt);
     karte.fitBounds(geojsonGruppe.getBounds());
 }
@@ -86,14 +127,17 @@ wienDatensaetze.sort(function(a,b) {
 
 })
 // den GeoJSON Layer für Grillplätze laden
-ladeGeojsonLayer(wienDatensaetze[0].json);
+ladeGeojsonLayer(wienDatensaetze[0]);
 
 let layerAuswahl = document.getElementById("layerAuswahl");
-for (datensatz of wienDatensaetze) {
-    layerAuswahl.innerHTML += `<option value="${datensatz.json}">${datensatz.titel}</option>`
-    //console.log(datensatz.titel)
+for (let i=0; i<wienDatensaetze.length; i++) {
+    layerAuswahl.innerHTML += `<option value="${i}">${wienDatensaetze[i].titel}</option>`
+    console.log(i,wienDatensaetze[i].titel)
 }
 layerAuswahl.onchange = function(evt) {
     geojsonGruppe.clearLayers();
-    ladeGeojsonLayer(evt.target.value);
+    let i = evt.target.value;
+    //console.log(i,wienDatensaetze[i])
+    ladeGeojsonLayer(wienDatensaetze[i]);
 }
+
