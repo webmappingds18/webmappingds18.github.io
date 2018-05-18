@@ -7,6 +7,7 @@
     Die .gpx Datei der eigenen Etappe als etappe00.gpx speichern
     Die .gpx Datei über https://mapbox.github.io/togeojson/ in .geojson umwandeln und als etappe00.geojson speichern
     Die etappe00.geojson Datei in ein Javascript Objekt umwandeln und als etappe00.geojson.js speichern
+
     -> statt 00 natürlich die eigene Etappe (z.B. 01,02, ...25)
 */
 
@@ -180,25 +181,9 @@ gpxTrack.on("loaded", function(evt) {
 let laenge =evt.target.get_distance().toFixed(0);
 document.getElementById("laenge").innerHTML = laenge;
 
-document.getElementById("get_distance").innerHTML = track.get_distance().toFixed(0);
-document.getElementById("get_elevation_min").innerHTML = track.get_elevation_min().toFixed(0);
-document.getElementById("get_elevation_max").innerHTML = track.get_elevation_max().toFixed(0);
-document.getElementById("get_elevation_gain").innerHTML = track.get_elevation_gain().toFixed(0);
-document.getElementById("get_elevation_loss").innerHTML = track.get_elevation_loss().toFixed(0);
-
     
     myMap.fitBounds(evt.target.getBounds());
 });
 
 myMap.addControl(new L.Control.Fullscreen(map));   //fullscreen
-
-
-
-
-
-
-
-
-
-
 
