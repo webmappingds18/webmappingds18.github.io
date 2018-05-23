@@ -17,6 +17,8 @@ const awsGroup = L.featureGroup();
 
 let markerGroup = L.featureGroup();
 
+let overlaySteigung = L.featureGroup().addTo(myMap);
+
 let myLayers = {
     osm: L.tileLayer(  // http://leafletjs.com/reference-1.3.0.html#tilelayer-l-tilelayer
         "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -95,7 +97,9 @@ let myMapControl = L.control.layers({       // http://leafletjs.com/reference-1.
 
 }, {
         //"basemap.at Overlay" : myLayers.bmapoverlay,
-        "wegpunkte": awsGroup,
+        //"wegpunkte": awsGroup,
+        "Steigungslinie" : overlaySteigung, 
+        
     });
 
 myMap.addLayer(markerGroup)
@@ -141,7 +145,7 @@ L.control.scale({           // http://leafletjs.com/reference-1.3.0.html#control
 
 // console.log("stationen: ", stationen);
 
-myMap.addLayer(awsGroup);
+//myMap.addLayer(awsGroup);
 /*
 let geojson = L.geoJSON(stationen).addTo(awsGroup);
 geojson.bindPopup(function (layer) {
@@ -169,7 +173,7 @@ myMap.fitBounds(awsGroup.getBounds()); */
 
 let gpxTrack = new L.GPX("data/etappe26.gpx", {
     async : true, 
-}).addTo(awsGroup);
+})//.addTo(awsGroup);
 gpxTrack.on("loaded", function(evt) {
     console.log("get_distance",evt.target.get_distance().toFixed(0))
     console.log("get_elevation_max",evt.target.get_elevation_max().toFixed(0)) 
@@ -178,22 +182,94 @@ gpxTrack.on("loaded", function(evt) {
     console.log("get_elevation_loss",evt.target.get_elevation_loss().toFixed(0))
 
 let laenge =evt.target.get_distance().toFixed(0);
-document.getElementById("laenge").innerHTML = laenge;
+document.getElementById("get_distance").innerHTML = laenge;
 
-document.getElementById("get_distance").innerHTML = track.get_distance().toFixed(0);
-document.getElementById("get_elevation_min").innerHTML = track.get_elevation_min().toFixed(0);
-document.getElementById("get_elevation_max").innerHTML = track.get_elevation_max().toFixed(0);
-document.getElementById("get_elevation_gain").innerHTML = track.get_elevation_gain().toFixed(0);
-document.getElementById("get_elevation_loss").innerHTML = track.get_elevation_loss().toFixed(0);
+
+let tief= evt.target.get_elevation_min().toFixed(0)
+let hoch= evt.target.get_elevation_max().toFixed(0)
+let aufstieg= evt.target.get_elevation_gain().toFixed(0)
+let abstieg= evt.target.get_elevation_loss().toFixed(0)
+
+document.getElementById("tief").innerHTML = tief
+document.getElementById("hoch").innerHTML = hoch
+document.getElementById("aufstieg").innerHTML = aufstieg
+document.getElementById("abstieg").innerHTML = abstieg
+
 
     
     myMap.fitBounds(evt.target.getBounds());
 });
 
-myMap.addControl(new L.Control.Fullscreen(map));   //fullscreen
+myMap.addControl(new L.Control.Fullscreen(myMap));   //fullscreen
+
+var hoehenprofil = L.control.elevation();
+hoehenprofil.addTo(myMap);
+var g=new L.GPX("data/etappe26.gpx", {async: true});
+//g.on("addline",function(e){
+//	hoehenprofil.addData(e.line);
+//});
+g.addTo(myMap);
 
 
+gpxTrack.on('addline', function(evt){
+hoehenprofil.addData(evt.line);
+  console.log(evt.line);
+  console.log(evt.line.getLatLngs());
+  console.log(evt.line.getLatLngs()[0]);
+  console.log(evt.line.getLatLngs()[0]);
+  console.log(evt.line.getLatLngs()[0].lat);
+  console.log(evt.line.getLatLngs()[0].lng);
+  console.log(evt.line.getLatLngs()[0].meta);
+  console.log(evt.line.getLatLngs()[0].meta.ele);
 
+  //alle Segmente der Steigungnslinie hinzufügen
+
+  let gpxLinie = evt.line.getLatLngs();
+    for (let i = 1; i < gpxLinie.length; i++) {
+        let p1 = gpxLinie[i-1];
+        let p2 =gpxLinie[i];
+        
+
+//Entfernung zwischen den Punkten berechnen
+        let dist= myMap.distance(
+            [p1.lat,p1.lng],
+            [p2.lat,p2.lng]
+        );
+      
+
+//hoehenunterschied
+        let delta = p2.meta.ele - p1.meta.ele;
+        
+
+        //Steigung in %
+       
+        let proz = (dist  > 0 ) ? (delta / dist * 100.0).toFixed(1) : 0;
+
+        console.log(p1.lat,p1.lng,p2.lat,p2.lng,dist,delta,proz);
+
+// Farben: http://colorbrewer2.org/#type=sequential&scheme=Greens&n=4
+        let farbe = 
+          proz > 10  ? "#cb181d" : 
+          proz > 6   ? "fb6a4a" : 
+          proz > 2   ? "#fcae91" : 
+          proz > 0   ? "#fee5d9" : 
+          proz > -2  ? "#edf8e9" : 
+          proz > -6  ? "#bae4b3" : 
+          proz > -10 ? "#74c476" :  
+                        "#238b45"; 
+        
+          let segment = L.polyline(
+            [
+            [p1.lat,p1.lng],
+            [p2.lat,p2.lng],
+            ], {
+                    color: farbe,
+                    weight : 10, 
+            }
+        ).addTo(overlaySteigung)
+    }
+
+});
 
 
 
